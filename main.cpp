@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <string>
 
 template <typename T>
 std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
