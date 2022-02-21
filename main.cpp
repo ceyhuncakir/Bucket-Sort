@@ -13,9 +13,7 @@ std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
   for(int index = max_elem; index >= 0; index--) {
 
     std::vector<std::vector<T>> buckets = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}};
-
-    std::cout << "loop " << index << std::endl;
-
+    std::cout << "ronde: " << index << std::endl;
     // we itereren door de lijst met getallen die gesorteerd moeten worden.
     for(int elementen = 0; elementen < array.size(); elementen++) {
 
@@ -27,11 +25,10 @@ std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
       std::string string_integer = ss.str();
 
       int last_char = string_integer[index];
+      int integer = std::stoi(string_integer);
+      int last = integer / 1 * std::pow(10, index - 2);
 
-      std::cout << string_integer << " " << string_integer[index] << std::endl;
-
-      buckets[last_char - 48].push_back(array[elementen]);
-      //
+      buckets[last % 10].push_back(array[elementen]);
     }
 
     array.clear();
@@ -56,8 +53,8 @@ int main() {
   int amount_of_integers;
 
   std::vector<float> unsorted;
-  std::vector<float> negative;
-  std::vector<float> positive;
+  std::vector<float> negative_numbers;
+  std::vector<float> positive_numbers;
 
   std::cout << "desired amount of integers: ";
   std::cin >> amount_of_integers;
@@ -71,15 +68,14 @@ int main() {
     unsorted.push_back(random_generated_integer);
 
     if(random_generated_integer < 0) {
-      negative.push_back(random_generated_integer);
+      negative_numbers.push_back(random_generated_integer);
     } else {
-      positive.push_back(random_generated_integer);
+      positive_numbers.push_back(random_generated_integer);
     }
-
   }
 
-  int max_negative = *max_element(negative.begin(), negative.end());
-  int max_positive = *max_element(positive.begin(), positive.end());
+  int max_negative = *min_element(negative_numbers.begin(), negative_numbers.end());
+  int max_positive = *max_element(positive_numbers.begin(), positive_numbers.end());
 
   std::ostringstream ss_neg;
   ss_neg << abs(max_negative);
@@ -87,33 +83,26 @@ int main() {
   int max_elem_neg = string_integer_neg.length();
 
   std::ostringstream ss_pos;
-  ss_pos << abs(max_positive);
+  ss_pos << max_positive;
   std::string string_integer_pos = ss_pos.str();
   int max_elem_pos = string_integer_pos.length();
 
-  std::vector<float> sorted_array_neg = bucket_sort(negative, max_elem_neg - 1);
-  std::vector<float> sorted_array_pos = bucket_sort(positive, max_elem_pos - 1);
-  //std::reverse(sorted_array.begin(), sorted_array.end());
+  std::vector<float> sorted_array_neg = bucket_sort(negative_numbers, max_elem_neg - 1);
+  std::reverse(sorted_array_neg.begin(), sorted_array_neg.end());
+
+  std::vector<float> sorted_array_pos = bucket_sort(positive_numbers, max_elem_pos - 1);
+
+  sorted_array_neg.insert(sorted_array_neg.end(),std::make_move_iterator(sorted_array_pos.begin()),std::make_move_iterator(sorted_array_pos.end()));
 
   std::cout << "given array - ";
 
   for(const auto elem : unsorted) { std::cout << elem << " | "; }
   std::cout << std::endl;
 
-
-  std::cout << "sorted array reverse - ";
-
-  for(const auto elem : sorted_array_neg) { std::cout << elem << " | "; }
-  std::cout << std::endl;
-
-
-  sorted_array_neg.insert(sorted_array_neg.end(),std::make_move_iterator(sorted_array_pos.begin()),std::make_move_iterator(sorted_array_pos.end()));
-
   std::cout << "sorted array - ";
 
   for(const auto elem : sorted_array_neg) { std::cout << elem << " | "; }
   std::cout << std::endl;
-
 
   return 0;
 }
