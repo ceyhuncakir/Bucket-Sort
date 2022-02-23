@@ -5,17 +5,12 @@
 #include <sstream>
 #include <string>
 
-// n + index + index(1 + n(1 + 1) + n) + 1
-// n + index + index(n + n)
-// index(n + n)
-// O(index + n)
-
 template <typename T>
 std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
 
   // initialiseren we een lijst met vectoren er in waar integers in zitten.
 
-  for(int index = max_elem; index >= 0; index--) {
+  for(int index = 0; index <= max_elem; index++) {
 
     // we creeren 9 lege buckets
     std::vector<std::vector<T>> buckets = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}};
@@ -23,7 +18,7 @@ std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
     for(int elements = 0; elements < array.size(); elements++) {
 
       // creert nullen voor de cijfers zodat wanneer er 3 getallen er zijn maar de index is 0-1 dan kunnen we nogsteeds de getal pakken zonder dat de programma crashed
-      int big_int = std::abs(array[elements]) * std::pow(10, index - 4);
+      int big_int = std::abs(array[elements]) / (int) std::pow(10, index);
 
       // we pushbacken de laatse integer als bucket en de element
       buckets[big_int % 10].push_back(array[elements]);
@@ -43,67 +38,18 @@ std::vector<T> bucket_sort(std::vector<T> array, int max_elem) {
   return array;
 }
 
-void test_bucket_sort() {
-
-  // test getallen in vectoren
-  std::vector<int> test_integers_unsorted = {-231, -32, -1, -12323, -2321, -23212, -5000, -1742, 232, 12, 942, 2521, 23212, 99000, 4823, 23212, 23212};
-  std::vector<int> test_integers_negative_unsorted = {-231, -32, -1, -12323, -2321, -23212, -5000, -1742};
-  std::vector<int> test_integers_positive_unsorted = {232, 12, 942, 2521, 23212, 99000, 4823, 23212, 23212};
-  std::vector<int> test_integers_negative_sorted = {};
-  std::vector<int> test_integers_positive_sorted = {};
-
-  // word er gekeken of de lijst van de negative nummers niet empty is
-  if(!test_integers_negative_unsorted.empty()) {
-    int max_negative = *min_element(test_integers_negative_unsorted.begin(), test_integers_negative_unsorted.end());
-
-    std::ostringstream ss_neg;
-    ss_neg << abs(max_negative);
-    std::string string_integer_neg = ss_neg.str();
-    int max_elem_neg = string_integer_neg.length();
-
-    test_integers_negative_sorted = bucket_sort(test_integers_negative_unsorted, max_elem_neg - 1);
-    std::reverse(test_integers_negative_sorted.begin(), test_integers_negative_sorted.end());
-
-  }
-
-  // word er gekeken of de lijst van de positieve nummers niet empty is
-  if(!test_integers_positive_unsorted.empty()) {
-    int max_positive = *max_element(test_integers_positive_unsorted.begin(), test_integers_positive_unsorted.end());
-
-    std::ostringstream ss_pos;
-    ss_pos << max_positive;
-    std::string string_integer_pos = ss_pos.str();
-    int max_elem_pos = string_integer_pos.length();
-
-    test_integers_positive_sorted = bucket_sort(test_integers_positive_unsorted, max_elem_pos - 1);
-  }
-
-  // voegen de uitkomsten in
-  test_integers_negative_sorted.insert(test_integers_negative_sorted.end(), test_integers_positive_sorted.begin(), test_integers_positive_sorted.end());
-
-  std::cout << "given test array - ";
-
-  for(const auto elem : test_integers_unsorted) { std::cout << elem << " | "; }
-  std::cout << std::endl;
-
-  std::cout << "sorted test array - ";
-
-  for(const auto elem : test_integers_negative_sorted) { std::cout << elem << " | "; }
-  std::cout << std::endl;
-
-  std::cout << "sorted array from std::sort - ";
+void test_bucket_sort(std::vector<float> sorted_array, std::vector<float> unsorted_array) {
 
   // build in functie om te bevestigen dat de algoritme werkt
-  std::sort(test_integers_unsorted.begin(), test_integers_unsorted.end());
+  std::sort(unsorted_array.begin(), unsorted_array.end());
 
-  for (auto elem : test_integers_unsorted) {
-      std::cout << elem << "|" << " ";
-  }
+  std::cout << "sorted array - ";
 
+  for(const auto elem : unsorted_array) { std::cout << elem << " | "; }
   std::cout << std::endl;
 
   // test of mijn uitkomsten de zelfde zijn als die van c++
-  if(test_integers_negative_sorted == test_integers_unsorted) {
+  if(unsorted_array == sorted_array) {
     std::cout << "de uitkomst van de eigen gemaakte bucket sort tegenover de sorting algoritme van c++: True";
   } else {
     std::cout << "de uitkomst van de eigen gemaakte bucket sort tegenover de sorting algoritme van c++: False";
@@ -189,7 +135,7 @@ int main() {
   for(const auto elem : sorted_array_neg) { std::cout << elem << " | "; }
   std::cout << std::endl;
 
-  test_bucket_sort();
+  //test_bucket_sort(sorted_array_pos, unsorted);
 
   return 0;
 }
